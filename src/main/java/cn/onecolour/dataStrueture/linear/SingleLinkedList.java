@@ -28,6 +28,27 @@ public class SingleLinkedList<T> implements Serializable {
     public SingleLinkedList() {
     }
 
+    public SingleLinkedList(SingleLinkedList<T> list) {
+        this();
+        if (list == null || list.size == 0) {
+            return;
+        }
+        this.first = new Node<>(list.first.element, list.first.next);
+        Node<T> tNode = this.first;
+        Node<T> temp = list.first;
+        while (temp != null) {
+            if (temp.next != null) {
+                tNode.next = new Node<>();
+                tNode.next.element = temp.next.element;
+            } else {
+                tNode.next = null;
+            }
+            tNode = tNode.next;
+            temp = temp.next;
+        }
+        this.size = list.size();
+    }
+
 
     public int size() {
         return size;
@@ -86,6 +107,7 @@ public class SingleLinkedList<T> implements Serializable {
                 } else {
                     oldPrevious.next = current;
                 }
+                size--;
             }
         };
     }
@@ -132,7 +154,6 @@ public class SingleLinkedList<T> implements Serializable {
             t = iterator.next();
             if (Objects.equals(element, t)) {
                 iterator.remove();
-                size--;
                 return true;
             }
         }
@@ -164,8 +185,8 @@ public class SingleLinkedList<T> implements Serializable {
     @SuppressWarnings("unchecked")
     public void removeAll(Collection<?> c) {
         for (Object o : c) {
-            if (contains(o)){
-                remove((T)o);
+            if (contains(o)) {
+                remove((T) o);
             }
         }
     }
@@ -176,12 +197,33 @@ public class SingleLinkedList<T> implements Serializable {
         boolean modified = false;
         Iterator<T> it = iterator();
         while (it.hasNext()) {
-            if (!c.contains(it.next())) {
-                it.remove();
+            T t = it.next();
+            if (!c.contains(t)) {
+                remove(t);
                 modified = true;
             }
         }
         return modified;
+    }
+
+    public SingleLinkedList<T> reverse() {
+        return reverse(this);
+    }
+
+    public static <T> SingleLinkedList<T> reverse(SingleLinkedList<T> list) {
+        SingleLinkedList<T> reverse = new SingleLinkedList<>(list);
+        if (reverse.size() > 1) {
+            Node<T> n1;
+            Node<T> newFirst = reverse.first;
+            while (reverse.first.next != null) {
+                n1 = reverse.first.next;
+                reverse.first.next = n1.next;
+                n1.next = newFirst;
+                newFirst = n1;
+            }
+            reverse.first = newFirst;
+        }
+        return reverse;
     }
 
     @Override
@@ -192,13 +234,38 @@ public class SingleLinkedList<T> implements Serializable {
         while ((t = iterator.next()) != null) {
             sb.append(t).append(",");
         }
-        sb.replace(sb.length() -1, sb.length(), "").append("]");
+        if (size > 0) {
+            sb.replace(sb.length() - 1, sb.length(), "");
+        }
+        sb.append("]");
         return sb.toString();
     }
 
     public void clear() {
         size = 0;
         first = null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SingleLinkedList)) {
+            return false;
+        }
+        SingleLinkedList<?> list = (SingleLinkedList<?>) obj;
+        if (list.size() != size) {
+            return false;
+        }
+        if (list.first.element.getClass() != first.element.getClass()) {
+            return false;
+        }
+        Iterator<?> iterator = ((SingleLinkedList<?>) obj).iterator();
+        Iterator<T> iter = iterator();
+        if (iter.hasNext() && iterator.hasNext()) {
+            if (!Objects.equals(iter.next(), iterator.next())) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

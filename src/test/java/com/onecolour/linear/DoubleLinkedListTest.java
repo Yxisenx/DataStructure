@@ -1,6 +1,6 @@
 package com.onecolour.linear;
 
-import cn.onecolour.dataStrueture.linear.SingleLinkedList;
+import cn.onecolour.dataStrueture.linear.DoubleLinkedList;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -8,13 +8,13 @@ import java.util.Collection;
 
 /**
  * @author yang
- * @date 2021/12/22
+ * @date 2021/12/25
  * @description
  */
-public class SingleLinkedListTest {
+public class DoubleLinkedListTest {
     @Test
     public void testGenerate() {
-        SingleLinkedList<Integer> list = new SingleLinkedList<>();
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>();
         for (int i = 0; i < 19; i++) {
             list.add(i);
         }
@@ -23,7 +23,7 @@ public class SingleLinkedListTest {
 
     @Test
     public void testRemove() {
-        SingleLinkedList<Integer> list = new SingleLinkedList<>();
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>();
         for (int i = 0; i < 19; i++) {
             list.add(i);
             if (i % 2 == 1) {
@@ -36,7 +36,7 @@ public class SingleLinkedListTest {
     @Test
     public void testRetainAll() {
         Collection<Integer> collection = Arrays.asList(1, 2, 3, 4, 5);
-        SingleLinkedList<Integer> list = new SingleLinkedList<>(new Integer[]{1, 2, 5, 6, 7});
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>(new Integer[]{1, 2, 5, 6, 7});
         list.retainAll(collection);
         System.out.println(list);
     }
@@ -44,16 +44,20 @@ public class SingleLinkedListTest {
     @Test
     public void testRemoveAll() {
         Collection<Integer> collection = Arrays.asList(1, 3, 4, 5);
-        SingleLinkedList<Integer> list = new SingleLinkedList<>(new Integer[]{1, 2, 5, 6, 7});
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>(new Integer[]{1, 2, 5, 6, 7});
         list.removeAll(collection);
         System.out.println(list);
     }
 
     @Test
     public void testReverse() {
-        SingleLinkedList<Integer> list = new SingleLinkedList<>(new Integer[]{1, 2, 5, 6, 7});
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>(new Integer[]{1, 2, 5, 6, 7});
         System.out.println(list);
-        SingleLinkedList<Integer> reverse = list.reverse();
+        DoubleLinkedList<Integer> reverse = list.reverse();
         System.out.println(reverse);
+        DoubleLinkedList<Integer> reverse1 = reverse.reverse();
+        System.out.println(reverse1);
+        System.out.println(list == reverse1);
+        System.out.println(list.equals(reverse1));
     }
 }
