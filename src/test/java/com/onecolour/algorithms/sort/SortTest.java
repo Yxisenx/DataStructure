@@ -1,9 +1,6 @@
-package com.onecolour.algorithms;
+package com.onecolour.algorithms.sort;
 
-import cn.onecolour.algorithms.sort.BubbleSort;
-import cn.onecolour.algorithms.sort.InsertionSort;
-import cn.onecolour.algorithms.sort.SelectionSort;
-import cn.onecolour.algorithms.sort.Sort;
+import cn.onecolour.algorithms.sort.*;
 import org.junit.Test;
 
 import java.util.*;
@@ -70,6 +67,21 @@ public class SortTest {
         test(new BubbleSort<>());
     }
 
+    @Test
+    public void testShellSort() {
+        @SuppressWarnings("unchecked")
+        ShellSort<Integer>[] sorts = new ShellSort[] {
+                new ShellSort<>(ShellSort.Type.NORMAL),
+                new ShellSort<>(ShellSort.Type.HIBBARD),
+                new ShellSort<>(ShellSort.Type.SEDGEWICK)
+        };
+        for (ShellSort<Integer> sort : sorts) {
+            System.out.println(sort.getType());
+            test(sort);
+        }
+
+    }
+
     private void test(Sort<Integer> sort) {
         String sortName = getName(sort);
         System.out.println(sortName);
@@ -95,6 +107,7 @@ public class SortTest {
             System.out.printf("sort %s num used: %s. result: %s%n", num, System.nanoTime() - start,
                     checkResult(nums, NON_NATURE_LIST_MAP.get(num)));
         }
+        System.out.println();
     }
 
 

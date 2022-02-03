@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * @date 2022/2/3
  * @description 冒泡排序
  */
+@SuppressWarnings("unchecked")
 public class BubbleSort<T extends Comparable<T>> implements Sort<T> {
     @Override
     public void sort(@NotNull T... arr) {
