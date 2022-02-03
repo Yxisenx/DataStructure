@@ -1,4 +1,4 @@
-package com.onecolour.linear;
+package com.onecolour.dataStructure.linear;
 
 import cn.onecolour.dataStrueture.linear.SingleLinkedList;
 import org.junit.Test;
