@@ -7,13 +7,14 @@ import org.jetbrains.annotations.NotNull;
  * @date 2022/1/28
  * @description
  */
+@SuppressWarnings("unchecked")
 public interface Sort<T extends Comparable<T>> {
 
-    void sort(@NotNull T... arr);
+    void natureSort(@NotNull T... arr);
 
     void nonNatureSort(@NotNull T ... arr);
 
-    default void swap(int i, int j, @NotNull T... arr) {
+    default void swap(int i, int j, @NotNull T[] arr) {
         if (i == j) {
             return;
         }

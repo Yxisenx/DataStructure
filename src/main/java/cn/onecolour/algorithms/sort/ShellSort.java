@@ -93,7 +93,7 @@ public class ShellSort<T extends Comparable<T>> implements Sort<T> {
     }
 
     @Override
-    public void sort(@NotNull T... arr) {
+    public void natureSort(@NotNull T... arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }

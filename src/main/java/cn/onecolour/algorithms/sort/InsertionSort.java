@@ -12,7 +12,7 @@ public class InsertionSort<T extends Comparable<T>> implements Sort<T> {
 
 
     @Override
-    public final void sort(@NotNull T... arr) {
+    public final void natureSort(@NotNull T... arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }

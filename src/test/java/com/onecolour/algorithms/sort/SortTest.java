@@ -92,7 +92,7 @@ public class SortTest {
             Integer[] nums = new Integer[arr.length];
             System.arraycopy(arr, 0, nums, 0, arr.length);
             long start = System.nanoTime();
-            sort.sort(nums);
+            sort.natureSort(nums);
             System.out.printf("sort %s num used: %s. result: %s%n", num, System.nanoTime() - start,
                     checkResult(nums, NATURE_LIST_MAP.get(num)));
         }
