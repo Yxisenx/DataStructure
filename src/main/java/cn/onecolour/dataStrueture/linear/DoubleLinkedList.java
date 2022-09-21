@@ -35,7 +35,7 @@ public class DoubleLinkedList<T> implements Serializable {
         }
         Iterator<?> iterator = ((DoubleLinkedList<?>) obj).iterator();
         Iterator<T> iter = iterator();
-        if (iter.hasNext() && iterator.hasNext()) {
+        while (iter.hasNext() && iterator.hasNext()) {
             if (!Objects.equals(iter.next(), iterator.next())) {
                 return false;
             }
