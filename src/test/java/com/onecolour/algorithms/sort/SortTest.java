@@ -82,6 +82,11 @@ public class SortTest {
 
     }
 
+    @Test
+    public void testMergeSort() {
+        test(new MergeSort<>());
+    }
+
     private void test(Sort<Integer> sort) {
         String sortName = getName(sort);
         System.out.println(sortName);
