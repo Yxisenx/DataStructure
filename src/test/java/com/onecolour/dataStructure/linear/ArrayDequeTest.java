@@ -1,8 +1,8 @@
 package com.onecolour.dataStructure.linear;
 
 import cn.onecolour.dataStrueture.linear.ArrayDeque;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author yang
@@ -10,9 +10,9 @@ import org.junit.Test;
  * @description
  */
 public class ArrayDequeTest {
-    ArrayDeque<Integer> deque;
+    private static ArrayDeque<Integer> deque;
 
-    @Before
+    @BeforeEach
     public void before() {
         System.out.println("Before:");
         deque = new ArrayDeque<>(10, 1, 2, 3, 4);

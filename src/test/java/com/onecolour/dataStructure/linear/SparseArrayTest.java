@@ -1,12 +1,10 @@
 package com.onecolour.dataStructure.linear;
 
 import cn.onecolour.dataStrueture.linear.SparseArray;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.IOException;
 
@@ -15,7 +13,7 @@ import java.io.IOException;
  * @date 2021/12/16
  * @description
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+//@TestMethodOrder(MethodOrderer.MethodName.class)
 public class SparseArrayTest {
     private final int[][] SPARSE_ARRAY = {
             {2, 7, 3},
@@ -29,33 +27,34 @@ public class SparseArrayTest {
             {0, 0, 0, 1, 0, 0, 0},
             {0, 0, 0, 0, 1, 0, 0},
     };
-    @Rule
-    public TestName name = new TestName();
 
-    @Before
-    public void before() {
-        System.out.println("-------------" + name.getMethodName() + "-------------");
+    @BeforeEach
+    public void before(TestInfo testInfo) {
+        System.out.println("-------------" + testInfo.getDisplayName() + "-------------");
     }
 
 
     String FULL_PATH = System.getProperty("user.dir") + "/src/test/resources/temp.txt";
 
-    @Test()
-    public void A1_TestArrToSparseArray() throws IOException {
+    @Test
+    @Order(1)
+    public void testArrToSparseArray() throws IOException {
         SparseArray sparseArray = SparseArray.builder().arr(ARRAY).build();
         sparseArray.toSparseArray();
         sparseArray.print();
     }
 
     @Test
-    public void A2_TestSparseArrToArray() throws IOException {
+    @Order(2)
+    public void testSparseArrToArray() throws IOException {
         SparseArray sparseArray = SparseArray.builder().sparseArr(SPARSE_ARRAY).build();
         sparseArray.toArray();
         sparseArray.print();
     }
 
     @Test
-    public void A3_TestWriteSparseArray() {
+    @Order(3)
+    public void testWriteSparseArray() {
         SparseArray sparseArray = SparseArray.builder().arr(ARRAY).build();
         sparseArray.toSparseArray();
         sparseArray.print();
@@ -63,7 +62,8 @@ public class SparseArrayTest {
     }
 
     @Test
-    public void A4_TestReadSparseArray() {
+    @Order(4)
+    public void testReadSparseArray() {
         SparseArray sparseArray = SparseArray.builder().build();
         sparseArray = sparseArray.read(FULL_PATH);
         sparseArray.print();

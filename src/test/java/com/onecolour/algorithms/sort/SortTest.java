@@ -1,7 +1,7 @@
 package com.onecolour.algorithms.sort;
 
 import cn.onecolour.algorithms.sort.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -70,7 +70,7 @@ public class SortTest {
     @Test
     public void testShellSort() {
         @SuppressWarnings("unchecked")
-        ShellSort<Integer>[] sorts = new ShellSort[] {
+        ShellSort<Integer>[] sorts = new ShellSort[]{
                 new ShellSort<>(ShellSort.Type.NORMAL),
                 new ShellSort<>(ShellSort.Type.HIBBARD),
                 new ShellSort<>(ShellSort.Type.SEDGEWICK)
