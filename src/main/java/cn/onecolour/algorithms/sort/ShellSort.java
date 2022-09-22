@@ -12,7 +12,6 @@ import java.util.TreeSet;
  * @description 普通希尔排序 DM=[N/2],Dk=[D(k+1)/2]
  * Hibbard增量序列 Dk=2^(k−1): {1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191...}
  */
-@SuppressWarnings("unchecked")
 public class ShellSort<T extends Comparable<T>> implements Sort<T> {
 
     private Type type = Type.HIBBARD;
@@ -25,7 +24,7 @@ public class ShellSort<T extends Comparable<T>> implements Sort<T> {
         return type.name();
     }
 
-    public ShellSort() {
+    protected ShellSort() {
     }
 
     public ShellSort(Type type) {
@@ -93,7 +92,7 @@ public class ShellSort<T extends Comparable<T>> implements Sort<T> {
     }
 
     @Override
-    public void natureSort(@NotNull T... arr) {
+    public void natureSort(@NotNull T[] arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }
@@ -114,7 +113,7 @@ public class ShellSort<T extends Comparable<T>> implements Sort<T> {
     }
 
     @Override
-    public void nonNatureSort(@NotNull T... arr) {
+    public void nonNatureSort(@NotNull T[] arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }

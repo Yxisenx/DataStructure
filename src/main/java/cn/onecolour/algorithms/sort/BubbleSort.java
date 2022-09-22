@@ -7,10 +7,9 @@ import org.jetbrains.annotations.NotNull;
  * @date 2022/2/3
  * @description 冒泡排序
  */
-@SuppressWarnings("unchecked")
 public class BubbleSort<T extends Comparable<T>> implements Sort<T> {
     @Override
-    public void natureSort(@NotNull T... arr) {
+    public void natureSort(@NotNull T[] arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }
@@ -27,7 +26,7 @@ public class BubbleSort<T extends Comparable<T>> implements Sort<T> {
     }
 
     @Override
-    public void nonNatureSort(@NotNull T... arr) {
+    public void nonNatureSort(@NotNull T[] arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }

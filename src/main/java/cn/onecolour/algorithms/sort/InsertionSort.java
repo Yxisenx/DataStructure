@@ -7,12 +7,11 @@ import org.jetbrains.annotations.NotNull;
  * @date 2022/1/28
  * @description 插入排序
  */
-@SuppressWarnings("unchecked")
 public class InsertionSort<T extends Comparable<T>> implements Sort<T> {
 
 
     @Override
-    public final void natureSort(@NotNull T... arr) {
+    public final void natureSort(@NotNull T[] arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }
@@ -28,7 +27,7 @@ public class InsertionSort<T extends Comparable<T>> implements Sort<T> {
     }
 
     @Override
-    public final void nonNatureSort(@NotNull T... arr) {
+    public final void nonNatureSort(@NotNull T[] arr) {
         if (arr == null || arr.length <= 1) {
             return;
         }
