@@ -1,6 +1,7 @@
 package com.onecolour.algorithms.sort;
 
 import cn.onecolour.algorithms.sort.*;
+import com.onecolour.util.RandomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.*;
@@ -12,7 +13,6 @@ import org.openjdk.jmh.runner.options.TimeValue;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,19 +43,9 @@ public class SortBenchmark {
 
     private final static Integer NUM = 10000;
 
-    @SuppressWarnings("SameParameterValue")
-    private static Integer[] getRandomArr(int maxValue, int num) {
-        Random random = new Random();
-        Integer[] nums = new Integer[num];
-        for (int i = 0; i < num; i++) {
-            nums[i] = random.nextInt(maxValue);
-        }
-        return nums;
-    }
-
     @Setup(Level.Invocation)
     public void init() {
-        ARRAY = getRandomArr(MAX_VALUE, NUM);
+        ARRAY = RandomUtils.randomArr(MAX_VALUE, NUM);
         NATURAL_ARRAY = Arrays.stream(ARRAY).sorted().toArray(Integer[]::new);
         NON_NATURAL_ARRAY = Arrays.stream(ARRAY).sorted(Comparator.reverseOrder()).toArray(Integer[]::new);
         COPY_OF_ARRAY = Arrays.copyOf(ARRAY, ARRAY.length);
@@ -65,7 +55,7 @@ public class SortBenchmark {
     @Test
     void runBenchmarks() throws Exception {
         Options options = new OptionsBuilder()
-                .include(this.getClass().getName() + ".*")
+                .include(this.getClass().getName() + ".bubble*")
                 .mode(Mode.AverageTime) // 平均响应时间
                 .warmupTime(TimeValue.seconds(1)) // 预热时间
                 .warmupIterations(5) // 基准测试前进行5次预热
