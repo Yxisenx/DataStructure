@@ -1,4 +1,4 @@
-package cn.onecolour.algorithms.search;
+package cn.onecolour.algorithms.search.array;
 
 /**
  * 线性搜索(遍历)

@@ -1,8 +1,7 @@
 package com.onecolour.algorithms.search;
 
-import cn.onecolour.algorithms.search.ArraySearch;
-import cn.onecolour.algorithms.search.BinarySearch;
-import com.onecolour.util.RandomUtils;
+import cn.onecolour.algorithms.search.array.ArraySearch;
+import cn.onecolour.algorithms.search.array.BinarySearch;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static cn.onecolour.algorithms.search.ArraySearch.SearchType.*;
+import static cn.onecolour.algorithms.search.array.ArraySearch.SearchType.*;
 
 /**
  * @author yang
@@ -47,11 +46,11 @@ public class ArraySearchBenchmarks {
         }
     }
 
-    private final int INDEX = RandomUtils.randomInteger(NUM);
-
     private final static Integer MAX_VALUE = 1000000;
 
     private final static Integer NUM = 100000;
+
+    private final static Integer[] INDEXES = {1, 10, 100, 1000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000};
 
     @Test
     public void generateArrayFile() throws IOException {
@@ -75,7 +74,7 @@ public class ArraySearchBenchmarks {
     @Test
     void runBenchmarks() throws Exception {
         Options options = new OptionsBuilder()
-                .include(this.getClass().getName() + ".((jump)|(binary))*")
+                .include(this.getClass().getName() + ".exponential*")
                 .mode(Mode.AverageTime) // 平均响应时间
                 .warmupTime(TimeValue.seconds(1)) // 预热时间
                 .warmupIterations(3) // 基准测试前进行5次预热
@@ -90,8 +89,11 @@ public class ArraySearchBenchmarks {
     }
 
     public void searchAndCheck(ArraySearch.SearchType type) {
-        int index = ArraySearch.getIndex(ARRAY, ARRAY[INDEX], type);
-        Assertions.assertEquals(index, INDEX);
+        for (Integer i : INDEXES) {
+            int index = ArraySearch.getIndex(ARRAY, ARRAY[i], type);
+            Assertions.assertEquals(index, i);
+        }
+
     }
 
     @Benchmark
@@ -112,9 +114,11 @@ public class ArraySearchBenchmarks {
     @Benchmark
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
     public void binarySearchRecursiveTest() {
-        ArraySearch binarySearch = new BinarySearch(cn.onecolour.algorithms.search.BinarySearch.BinarySearchType.recursive);
-        int index = binarySearch.getIndex(ARRAY, ARRAY[INDEX]);
-        Assertions.assertEquals(index, INDEX);
+        ArraySearch binarySearch = new BinarySearch(cn.onecolour.algorithms.search.array.BinarySearch.BinarySearchType.recursive);
+        for (Integer i : INDEXES) {
+            int index = binarySearch.getIndex(ARRAY, ARRAY[i]);
+            Assertions.assertEquals(index, i);
+        }
     }
 
 
@@ -123,5 +127,19 @@ public class ArraySearchBenchmarks {
     @Test
     public void jumpSearchTest() {
         searchAndCheck(JumpSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void interpolationSearchTest() {
+        searchAndCheck(InterpolationSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void exponentialSearchTest() {
+        searchAndCheck(ExponentialSearch);
     }
 }

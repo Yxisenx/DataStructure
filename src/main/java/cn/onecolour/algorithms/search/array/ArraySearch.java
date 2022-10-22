@@ -1,4 +1,4 @@
-package cn.onecolour.algorithms.search;
+package cn.onecolour.algorithms.search.array;
 
 
 import java.lang.reflect.Constructor;
@@ -28,9 +28,11 @@ public interface ArraySearch {
     }
 
     enum SearchType {
-        LinearSearch(cn.onecolour.algorithms.search.LinearSearch.class), // 线性搜索
-        BinarySearch(cn.onecolour.algorithms.search.BinarySearch.class), // 二分搜索
-        JumpSearch(cn.onecolour.algorithms.search.JumpSearch.class) // 跳跃搜索
+        LinearSearch(cn.onecolour.algorithms.search.array.LinearSearch.class), // 线性搜索
+        BinarySearch(cn.onecolour.algorithms.search.array.BinarySearch.class), // 二分搜索
+        JumpSearch(cn.onecolour.algorithms.search.array.JumpSearch.class), // 跳跃搜索
+        InterpolationSearch(cn.onecolour.algorithms.search.array.InterpolationSearch.class), // 插值搜索
+        ExponentialSearch(cn.onecolour.algorithms.search.array.ExponentialSearch.class), // 指数搜索
         ;
         public final Class<? extends ArraySearch> clazz;
         private static final Map<String, ArraySearch> SEARCH_MAP = new HashMap<>();

@@ -1,4 +1,4 @@
-package cn.onecolour.algorithms.search;
+package cn.onecolour.algorithms.search.array;
 
 /**
  * @author yang
