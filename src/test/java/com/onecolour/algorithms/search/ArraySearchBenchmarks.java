@@ -74,7 +74,7 @@ public class ArraySearchBenchmarks {
     @Test
     void runBenchmarks() throws Exception {
         Options options = new OptionsBuilder()
-                .include(this.getClass().getName() + ".exponential*")
+                .include(this.getClass().getName() + ".fibonacci*")
                 .mode(Mode.AverageTime) // 平均响应时间
                 .warmupTime(TimeValue.seconds(1)) // 预热时间
                 .warmupIterations(3) // 基准测试前进行5次预热
@@ -141,5 +141,12 @@ public class ArraySearchBenchmarks {
     @Test
     public void exponentialSearchTest() {
         searchAndCheck(ExponentialSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void fibonacciSearchTest() {
+        searchAndCheck(FibonacciSearch);
     }
 }
