@@ -2,6 +2,7 @@ package com.onecolour.algorithms.search;
 
 import cn.onecolour.algorithms.search.array.ArraySearch;
 import cn.onecolour.algorithms.search.array.BinarySearch;
+import cn.onecolour.algorithms.search.array.TernarySearch;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -73,8 +74,10 @@ public class ArraySearchBenchmarks {
 
     @Test
     void runBenchmarks() throws Exception {
+        String currentClassName = this.getClass().getName();
         Options options = new OptionsBuilder()
-                .include(this.getClass().getName() + ".fibonacci*")
+                .include(currentClassName + ".ternary*")
+                .include(currentClassName + ".binary*")
                 .mode(Mode.AverageTime) // 平均响应时间
                 .warmupTime(TimeValue.seconds(1)) // 预热时间
                 .warmupIterations(3) // 基准测试前进行5次预热
@@ -148,5 +151,23 @@ public class ArraySearchBenchmarks {
     @Test
     public void fibonacciSearchTest() {
         searchAndCheck(FibonacciSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void ternarySearchIterationTest() {
+        searchAndCheck(TernarySearch);
+    }
+
+    @Test
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    public void ternarySearchRecursiveTest() {
+        ArraySearch ternarySearch = new TernarySearch(cn.onecolour.algorithms.search.array.TernarySearch.TernarySearchType.recursive);
+        for (Integer i : INDEXES) {
+            int index = ternarySearch.getIndex(ARRAY, ARRAY[i]);
+            Assertions.assertEquals(index, i);
+        }
     }
 }

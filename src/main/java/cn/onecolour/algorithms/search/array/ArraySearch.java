@@ -33,7 +33,9 @@ public interface ArraySearch {
         JumpSearch(cn.onecolour.algorithms.search.array.JumpSearch.class), // 跳跃搜索
         InterpolationSearch(cn.onecolour.algorithms.search.array.InterpolationSearch.class), // 插值搜索
         ExponentialSearch(cn.onecolour.algorithms.search.array.ExponentialSearch.class), // 指数搜索
-        FibonacciSearch(cn.onecolour.algorithms.search.array.FibonacciSearch.class); // 斐波拉契搜索
+        FibonacciSearch(cn.onecolour.algorithms.search.array.FibonacciSearch.class), // 斐波拉契搜索
+        TernarySearch(cn.onecolour.algorithms.search.array.TernarySearch.class), // 三元搜索
+        ;
         public final Class<? extends ArraySearch> clazz;
         private static final Map<String, ArraySearch> SEARCH_MAP = new HashMap<>();
 

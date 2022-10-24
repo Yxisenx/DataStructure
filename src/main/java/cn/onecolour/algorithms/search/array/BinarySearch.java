@@ -64,8 +64,7 @@ public class BinarySearch implements ArraySearch {
             int mid = l + (r - l) / 2;
             if (arr[mid] == x) {
                 return mid;
-            }
-            if (arr[mid] > x) {
+            } else if (arr[mid] > x) {
                 return binarySearchByRecursive(arr, x, l, mid - 1);
             }
             return binarySearchByRecursive(arr, x, mid + 1, r);
