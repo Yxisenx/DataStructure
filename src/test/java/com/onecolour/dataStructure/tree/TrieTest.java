@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author yang
@@ -58,6 +59,20 @@ public class TrieTest {
             String mean = split[1].substring(1, split[1].length() - 1);
             trie.add(word, mean);
         });
-        System.out.println(trie.suggest("human", 100, true));
+        Scanner sc1 = new Scanner(System.in);
+        System.out.print("num: ");
+        int num = sc1.nextInt();
+        sc1.reset();
+        String prefix;
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.print("prefix: ");
+            prefix = sc.nextLine();
+            for (String s : trie.suggest(prefix, num, true)) {
+                System.out.println(s);
+            }
+            System.out.println("==============================");
+        }
+
     }
 }
