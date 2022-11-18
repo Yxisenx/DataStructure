@@ -1,4 +1,4 @@
-package cn.onecolour.dataStructure.tree;
+package cn.onecolour.dataStructure.tree.heap;
 
 import cn.onecolour.dataStructure.tree.heap.Heap;
 import cn.onecolour.dataStructure.tree.heap.MaxHeap;
