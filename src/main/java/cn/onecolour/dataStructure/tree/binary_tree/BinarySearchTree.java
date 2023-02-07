@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
  * @date 2022/11/15
  * @description BST
  */
-@SuppressWarnings("UnusedReturnValue")
 public class BinarySearchTree<T extends Comparable<T>> {
     private Node<T> root;
     private int size;
@@ -122,20 +121,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     public List<T> inorderList() {
-        LinkedList<Node<T>> stack = new LinkedList<>();
-        List<T> result = new ArrayList<>(size);
-
-        Node<T> temp = root;
-        while (temp != null || !stack.isEmpty()) {
-            while (temp != null) {
-                stack.push(temp);
-                temp = temp.getLeft();
-            }
-            temp = stack.pop();
-            result.add(temp.getVal());
-            temp = temp.getRight();
-        }
-        return result;
+        return BstUtils.inorderList(root, size);
     }
 
 
@@ -181,19 +167,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
 
     private boolean depthFirstSearch(T ele) {
-        Node<T> temp = root;
-
-        while (temp != null) {
-            int compareTo = temp.getVal().compareTo(ele);
-            if (compareTo > 0) {
-                temp = temp.getLeft();
-            } else if (compareTo < 0) {
-                temp = temp.getRight();
-            } else {
-                return true;
-            }
-        }
-        return false;
+        return BstUtils.search(ele, root);
     }
 
     private boolean breadthFirstSearch(T ele) {
@@ -243,230 +217,72 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
 
-    /**
-     * delete an element from the bst.
-     * <p>the node to be deleted is a leaf.</p>
-     * <p>&nbsp&nbsp&nbsp&nbsp instead the node of null</p>
-     * <p>the node has just one child.</p>
-     * <p>&nbsp&nbsp&nbsp&nbsp replace the node as the child of the node </p>
-     * <p>the node has two child.</p>
-     * <p>&nbsp&nbsp&nbsp&nbsp First, find the inorder successor of the node to be deleted.</p>
-     * <p>&nbsp&nbsp&nbsp&nbsp After that, replace that node with the inorder successor until the target node is placed at the leaf of tree.</p>
-     * <p>&nbsp&nbsp&nbsp&nbsp And at last, replace the node with NULL and free up the allocated space.</p>
-     * <p></p>
-     * <p>delete by moving node</p>
-     */
-    private boolean deleteV1(T ele) {
-        Node<T> parent = null;
-        Node<T> cur = root;
-        while (cur != null) {
-            int compareVal = ele.compareTo(cur.getVal());
-            // equals
-            if (compareVal == 0) {
-                if (parent == null) {
-                    // remove root (cur -> root)
-                    if (cur.hasRightChild() && cur.hasLeftChild()) {
-                        // two child
-                        // successor is the minimum node of the right subtree
-                        Node<T> successorP = null;
-                        Node<T> successor = cur.getRight();
-                        while (successor.hasLeftChild()) {
-                            successorP = successor;
-                            successor = successor.getLeft();
-                        }
-                        if (successorP == null) {
-                            // successor is cur right child
-                            successor.setLeft(root.getLeft());
-                            clearNode(root);
-                            root = successor;
-                        } else {
-                            if (successor.hasRightChild()) {
-                                // is not a leaf
-                                successorP.setLeft(successor.getRight());
-                                successor.setLeft(root.getLeft());
-                                successor.setRight(root.getRight());
-                                clearNode(root);
-                                root = successor.getRight();
-                            } else {
-                                // is a leaf
-                                successorP.setLeft(null);
-                                successor.setLeft(root.getLeft());
-                                successor.setRight(root.getRight());
-                                clearNode(root);
-                                root = successor;
-                            }
-                        }
-                    } else if (cur.hasLeftChild() || cur.hasRightChild()) {
-                        // one child
-                        Node<T> child = cur.hasLeftChild() ? cur.getLeft() : cur.getRight();
-                        clearNode(root);
-                        root = child;
-                    } else {
-                        // no child
-                        clearNode(root);
-                        root = null;
-                    }
-                } else {
-                    if (cur.hasRightChild() && cur.hasLeftChild()) {
-                        // two child
-                        boolean curIsLeftChild = cur.equals(parent.getLeft());
-                        // successor is the minimum node of the right subtree
-                        Node<T> successorP = null;
-                        Node<T> successor = cur.getRight();
-                        // find minimum
-                        while (successor.hasLeftChild()) {
-                            successorP = successor;
-                            successor = successor.getLeft();
-                        }
-
-                        if (successorP == null) {
-                            // successor is right of cur.
-                            if (curIsLeftChild) {
-                                parent.setLeft(successor);
-                            } else {
-                                parent.setRight(successor);
-                            }
-                            successor.setLeft(cur.getLeft());
-                        } else {
-                            successorP.setLeft(successor.hasRightChild() ? successor.getRight() : null);
-                            if (curIsLeftChild) {
-                                parent.setLeft(successor);
-                            } else {
-                                parent.setRight(successor);
-                            }
-                            successor.setLeft(cur.getLeft());
-                            successor.setRight(cur.getRight());
-                        }
-                        clearNode(cur);
-
-
-                    } else if (cur.hasLeftChild() || cur.hasRightChild()) {
-                        // one child
-                        if (cur.equals(parent.getLeft())) {
-                            parent.setLeft(cur.hasLeftChild() ? cur.getLeft() : cur.getRight());
-                        } else {
-                            parent.setRight(cur.hasLeftChild() ? cur.getLeft() : cur.getRight());
-                        }
-                        clearNode(cur);
-                    } else {
-                        // no child
-                        if (cur.equals(parent.getLeft())) {
-                            parent.setLeft(null);
-                        } else {
-                            parent.setRight(null);
-                        }
-                        cur.setVal(null);
-                    }
+    public void delete(T ele) {
+        delete(ele, root);
+    }
+    private Node<T> delete(T ele, Node<T> node) {
+        if (node == null) {
+            return null;
+        }
+        int compareVal = ele.compareTo(node.getVal());
+        if (compareVal == 0) {
+            if (node.hasLeftChild() && node.hasRightChild()) {
+                // inorder successor
+                Node<T> successor = node.getRight();
+                while (successor.getLeft() != null) {
+                    successor = successor.getLeft();
                 }
-                return true;
+                node.setVal(successor.getVal());
+                node.setRight(delete( node.getVal(), node.getRight()));
             } else {
-                parent = cur;
-                cur = compareVal > 0 ? cur.getRight() : cur.getLeft();
+                node = node.hasLeftChild() ? node.getLeft() : node.getRight();
+                size--;
             }
+        } else if (compareVal > 0) {
+            node.setRight(delete(ele, node.getRight()));
+        } else {
+            node.setLeft(delete(ele, node.getLeft()));
         }
-        return false;
+        return node;
     }
 
-    public boolean delete(T ele) {
-        return deleteV2(ele);
-    }
-
-    public boolean delete(T ele, DeleteType type) {
-        boolean result;
-        switch (type) {
-            case V1:
-                result = deleteV1(ele);
-                break;
-            case V2:
-                result = deleteV2(ele);
-                break;
-            default:
-                throw new IllegalArgumentException("Not found the type.");
+    private static class Node<T> extends BaseTreeNode<T> {
+        public Node() {
         }
-        if (result) {
-            size--;
+
+        public Node(T val, Node<T> left, BaseTreeNode<T> right) {
+            super(val, left, right);
         }
-        return result;
-    }
 
-    private boolean deleteV2(T ele) {
-        Node<T> parent = null;
-        Node<T> cur = root;
-        while (cur != null) {
-            int compareVal = ele.compareTo(cur.getVal());
-            // equals
-            if (compareVal == 0) {
-                if (cur.hasLeftChild() || cur.hasRightChild()) {
-                    if (cur.hasLeftChild() && cur.hasRightChild()) {
-                        // has two child
-                        // find successor( the minimum node of the subtree whose root node is the right child of cur), inorder
-                        Node<T> successor = cur.getRight();
-                        Node<T> successorParent = cur;
-                        // minimum
-                        while (successor.hasLeftChild()) {
-                            successorParent = successor;
-                            successor = successor.getLeft();
-                        }
-                        // change value of cur with successor
-                        T temp = cur.getVal();
-                        cur.setVal(successor.getVal());
-                        successor.setVal(temp);
 
-                        boolean successorIsLeftChild = successor.equals(successorParent.getLeft());
-                        if (successorIsLeftChild) {
-                            successorParent.setLeft(successor.getRight());
-                        } else {
-                            successorParent.setRight(successor.getRight());
-                        }
-                        clearNode(successor);
-                    } else {
-                        // has one child, replace cur with the child
-                        Node<T> child = cur.hasLeftChild() ? cur.getLeft() : cur.getRight();
-                        if (parent != null) {
-                            if (cur.equals(parent.getLeft())) {
-                                parent.setLeft(child);
-                            } else {
-                                parent.setRight(child);
-                            }
-                            clearNode(cur);
-                        } else {
-                            // cur is the root node
-                            clearNode(root);
-                            root = child;
-                        }
-                    }
-                } else {
-                    // is a leaf
-                    if (parent != null) {
-                        // cur is different with root
-                        if (cur.equals(parent.getLeft())) {
-                            // cur is left child of parent
-                            parent.setLeft(null);
-                        } else {
-                            parent.setRight(null);
-                        }
-                    } else {
-                        root = null;
-                    }
-                    clearNode(cur);
-                }
-                return true;
-            } else {
-                parent = cur;
-                cur = compareVal > 0 ? cur.getRight() : cur.getLeft();
-            }
+        @Override
+        public Node<T> getLeft() {
+            return (Node<T>) super.getLeft();
         }
-        return false;
-    }
 
-    public enum DeleteType {
-        V1, V2
-    }
 
-    private void clearNode(Node<T> node) {
-        node.setLeft(null);
-        node.setRight(null);
-        node.setVal(null);
+        public void setLeft(Node<T> left) {
+            super.setLeft(left);
+        }
+
+        @Override
+        public Node<T> getRight() {
+            return (Node<T>) super.getRight();
+        }
+
+        public void setRight(Node<T> right) {
+            super.setRight(right);
+        }
+
+        @Override
+        public boolean hasLeftChild() {
+            return super.hasLeftChild();
+        }
+
+        @Override
+        public boolean hasRightChild() {
+            return super.hasRightChild();
+        }
     }
 
 }

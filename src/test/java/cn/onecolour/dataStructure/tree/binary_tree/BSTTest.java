@@ -94,8 +94,8 @@ public class BSTTest {
 //            System.out.println(list);
             init();
             for (Integer integer : list) {
-                bst.delete(integer, BinarySearchTree.DeleteType.V1);
-                bst2.delete(integer, BinarySearchTree.DeleteType.V2);
+                bst.delete(integer);
+                bst2.delete(integer);
             }
             List<Integer> list1 = bst.inorderList();
             List<Integer> list2 = bst2.inorderList();
@@ -107,20 +107,4 @@ public class BSTTest {
 
     }
 
-    @Test
-    void deleteV2Test() {
-        for (Integer integer : integers) {
-            bst2.delete(integer, BinarySearchTree.DeleteType.V2);
-        }
-        System.out.println(bst2.inorderList());
-    }
-
-    @Test
-    void deleteV1Test() {
-        List<Integer> integers = Arrays.asList(1, 3, 2, 4, 5, 7);
-        for (Integer integer : integers) {
-            bst.delete(integer, BinarySearchTree.DeleteType.V1);
-        }
-        System.out.println(bst.inorderList());
-    }
 }

@@ -3,15 +3,15 @@ package cn.onecolour.dataStructure.tree.binary_tree;
 
 import java.util.Objects;
 
-class Node<T> {
+class BaseTreeNode<T> {
     private T val;
-    private Node<T> left;
-    private Node<T> right;
+    private BaseTreeNode<T> left;
+    private BaseTreeNode<T> right;
 
-    public Node() {
+    public BaseTreeNode() {
     }
 
-    public Node(T val, Node<T> left, Node<T> right) {
+    public BaseTreeNode(T val, BaseTreeNode<T> left, BaseTreeNode<T> right) {
         this.val = val;
         this.left = left;
         this.right = right;
@@ -25,19 +25,19 @@ class Node<T> {
         this.val = val;
     }
 
-    public Node<T> getLeft() {
+    public BaseTreeNode<T> getLeft() {
         return left;
     }
 
-    public void setLeft(Node<T> left) {
+    public void setLeft(BaseTreeNode<T> left) {
         this.left = left;
     }
 
-    public Node<T> getRight() {
+    public BaseTreeNode<T> getRight() {
         return right;
     }
 
-    public void setRight(Node<T> right) {
+    public void setRight(BaseTreeNode<T> right) {
         this.right = right;
     }
 
