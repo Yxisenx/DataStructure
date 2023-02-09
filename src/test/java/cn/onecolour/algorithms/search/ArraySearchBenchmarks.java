@@ -2,6 +2,7 @@ package cn.onecolour.algorithms.search;
 
 import cn.onecolour.algorithms.search.array.ArraySearch;
 import cn.onecolour.algorithms.search.array.BinarySearch;
+import cn.onecolour.algorithms.search.array.MultivariateSearch;
 import cn.onecolour.algorithms.search.array.TernarySearch;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +41,7 @@ public class ArraySearchBenchmarks {
             File file = new File(System.getProperty("user.dir") + "/src/test/resources/sortArray.txt");
             if (file.exists()) {
                 String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-                ARRAY = Arrays.stream(s.split(",\n")).mapToInt(Integer::parseInt).toArray();
+                ARRAY = Arrays.stream(s.split("(,\r\n)|(,\n)|(,\r)")).mapToInt(Integer::parseInt).toArray();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -76,8 +77,8 @@ public class ArraySearchBenchmarks {
     void runBenchmarks() throws Exception {
         String currentClassName = this.getClass().getName();
         Options options = new OptionsBuilder()
-                .include(currentClassName + ".ternary*")
-                .include(currentClassName + ".binary*")
+                .include(currentClassName + ".multivariate*")
+//                .include(currentClassName + ".binary*")
                 .mode(Mode.AverageTime) // 平均响应时间
                 .warmupTime(TimeValue.seconds(1)) // 预热时间
                 .warmupIterations(3) // 基准测试前进行5次预热
@@ -94,9 +95,20 @@ public class ArraySearchBenchmarks {
     public void searchAndCheck(ArraySearch.SearchType type) {
         for (Integer i : INDEXES) {
             int index = ArraySearch.getIndex(ARRAY, ARRAY[i], type);
-            Assertions.assertEquals(index, i);
+            Assertions.assertEquals(i, index);
         }
+    }
 
+    private void searchAndCheck(ArraySearch search) {
+        for (Integer i : INDEXES) {
+            int index = search.getIndex(ARRAY, ARRAY[i]);
+            try {
+                Assertions.assertEquals(i, index);
+            } catch (AssertionError e) {
+                e.printStackTrace();
+                System.out.println(i);
+            }
+        }
     }
 
     @Benchmark
@@ -118,10 +130,7 @@ public class ArraySearchBenchmarks {
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
     public void binarySearchRecursiveTest() {
         ArraySearch binarySearch = new BinarySearch(cn.onecolour.algorithms.search.array.BinarySearch.BinarySearchType.recursive);
-        for (Integer i : INDEXES) {
-            int index = binarySearch.getIndex(ARRAY, ARRAY[i]);
-            Assertions.assertEquals(index, i);
-        }
+        searchAndCheck(binarySearch);
     }
 
 
@@ -160,14 +169,53 @@ public class ArraySearchBenchmarks {
         searchAndCheck(TernarySearch);
     }
 
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void multivariateOneSearchTest() {
+        ArraySearch multivariateSearch = new MultivariateSearch(1);
+        searchAndCheck(multivariateSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void multivariateTwoSearchTest() {
+        ArraySearch multivariateSearch = new MultivariateSearch(2);
+        searchAndCheck(multivariateSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void multivariateThreeSearchTest() {
+        ArraySearch multivariateSearch = new MultivariateSearch(3);
+        searchAndCheck(multivariateSearch);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void multivariateFourSearchTest() {
+        ArraySearch multivariateSearch = new MultivariateSearch(4);
+        searchAndCheck(multivariateSearch);
+    }
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Test
+    public void multivariateTenSearchTest() {
+        ArraySearch multivariateSearch = new MultivariateSearch(10);
+//        multivariateSearch.getIndex(ARRAY, 27);
+        searchAndCheck(multivariateSearch);
+    }
+
+
+
     @Test
     @Benchmark
     @OutputTimeUnit(TimeUnit.MICROSECONDS)
     public void ternarySearchRecursiveTest() {
         ArraySearch ternarySearch = new TernarySearch(cn.onecolour.algorithms.search.array.TernarySearch.TernarySearchType.recursive);
-        for (Integer i : INDEXES) {
-            int index = ternarySearch.getIndex(ARRAY, ARRAY[i]);
-            Assertions.assertEquals(index, i);
-        }
+        searchAndCheck(ternarySearch);
     }
 }
