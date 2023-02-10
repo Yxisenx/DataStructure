@@ -50,6 +50,8 @@ public class TreeUtilTest {
         Set<Org> set = TreeUtil.collectionToTree(ORGS, Org::getParentId, Org::getId, Org::getChildren, Set.class);
         Set<Org> set1 = TreeUtil.treeToSet(set, Org::getParentId, Org::getId, Org::getChildren);
         Assertions.assertEquals(set1.size(), ORGS.size());
+        Org org = TreeUtil.collectionToTreeRoot(ORGS, Org::getParentId, Org::getId, Org::getChildren);
+        System.out.println(JsonUtils.toJsonString(org));
 
 
     }

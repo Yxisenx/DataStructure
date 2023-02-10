@@ -57,7 +57,7 @@ public class TreeUtil {
             try {
                 return (RESULT) collectionSupplier(resCollectionType);
             } catch (NoSuchMethodException e) {
-                throw new TreeUtilException(e);
+                throw new TreeException(e);
             }
         }, () -> TreeUtil.<T, R, L>instance(refIdGetFunction, idGetFunction, subGetFunction).collectionToTree(nodes, resCollectionType));
     }
@@ -74,9 +74,27 @@ public class TreeUtil {
             try {
                 return (RESULT) collectionSupplier(resCollectionType);
             } catch (NoSuchMethodException e) {
-                throw new TreeUtilException(e);
+                throw new TreeException(e);
             }
         }, () -> TreeUtil.<T>instance((Class<T>) nodes.iterator().next().getClass(), refIdField, idField, subField).collectionToTree(nodes, resCollectionType));
+    }
+
+    public static <T> T collectionToTreeRoot(@Nonnull Collection<T> nodes, @Nonnull String refIdField,
+                                             @Nonnull String idField, @Nonnull String subField) {
+        return treeRoot(() -> collectionToTree(nodes, refIdField, idField, subField));
+    }
+
+    public static <T, R, L extends Collection> T collectionToTreeRoot(@Nonnull Collection<T> nodes, @Nonnull SFunction<T, R> refIdGetFunction,
+                                                                        @Nonnull SFunction<T, R> idGetFunction, @Nonnull SFunction<T, L> subGetFunction) {
+        return treeRoot(() -> collectionToTree(nodes, refIdGetFunction, idGetFunction, subGetFunction));
+    }
+
+    private static <T> T treeRoot(Supplier<List<T>> supplier) {
+        List<T> result = supplier.get();
+        if (result == null || result.size() != 1) {
+            throw new TreeException("Transfer result is exceptional.");
+        }
+        return result.get(0);
     }
 
 
@@ -87,7 +105,7 @@ public class TreeUtil {
 
     private static <T, R, L extends Collection> Instance<T> instance(SFunction<T, R> refIdGetFunction, SFunction<T, R> idGetFunction,
                                                                      SFunction<T, L> subGetFunction) {
-        SerializedLambda serializedLambda = refIdGetFunction.getSerializedLambda();
+        SerializedLambda serializedLambda = SerializedLambdaUtils.getFunctionalInterfaceSerializedLambda(refIdGetFunction);
         String className = serializedLambda.getImplClass().replace("/", ".");
         String cacheKey = instanceName(className, refIdGetFunction, idGetFunction, subGetFunction);
         return (Instance<T>) INSTANCE_MAP.computeIfAbsent(cacheKey, key -> {
@@ -95,7 +113,7 @@ public class TreeUtil {
             try {
                 clazz = (Class<T>) Class.forName(className);
             } catch (ClassNotFoundException e) {
-                throw new TreeUtilException(e);
+                throw new TreeException(e);
             }
 
             return new Instance<>(clazz, new ReflectName(refIdGetFunction), new ReflectName(idGetFunction), new ReflectName(subGetFunction));
@@ -135,7 +153,7 @@ public class TreeUtil {
                     try {
                         return constructor.newInstance();
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                        throw new TreeUtilException(e);
+                        throw new TreeException(e);
                     }
                 };
         }
@@ -165,7 +183,7 @@ public class TreeUtil {
                     try {
                         subSetter.invoke(ele, collection);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new TreeUtilException(e);
+                        throw new TreeException(e);
                     }
                 };
                 return;
@@ -193,14 +211,14 @@ public class TreeUtil {
                     try {
                         subField.set(obj, collection);
                     } catch (IllegalAccessException e) {
-                        throw new TreeUtilException(e);
+                        throw new TreeException(e);
                     }
                 };
                 //noinspection unchecked
                 Class<? extends Collection> type = (Class<? extends Collection>) subField.getType();
                 setNewSubSupplier(type);
             } catch (NoSuchFieldException | NoSuchMethodException e) {
-                throw new TreeUtilException("Find field failed! ", e);
+                throw new TreeException("Find field failed! ", e);
             }
         }
 
@@ -234,7 +252,7 @@ public class TreeUtil {
 
         public <R extends Collection> R collectionToTree(Collection<T> collection, Class<R> clazz) {
             Map<?, T> idObjMap = collection.stream().collect(Collectors.toMap(GET_ID, Function.identity(), (t, t2) -> {
-                throw new TreeUtilException("Duplicate key! ");
+                throw new TreeException("Duplicate key! ");
             }));
             Map<?, ? extends Set<?>> refIdMap = collection.stream().collect(Collectors.groupingBy(obj -> {
                 Object parentId = GET_REF_ID.apply(obj);
@@ -290,7 +308,7 @@ public class TreeUtil {
                 try {
                     return m.invoke(obj);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new TreeUtilException(e);
+                    throw new TreeException(e);
                 }
             };
         }
@@ -300,31 +318,19 @@ public class TreeUtil {
                 try {
                     return field.get(obj);
                 } catch (IllegalAccessException e) {
-                    throw new TreeUtilException(e);
+                    throw new TreeException(e);
                 }
             };
         }
     }
 
     /**
-     * SFunction代替Function，获取序列化能力
+     * SFunction获取序列化能力
      */
     @FunctionalInterface
     public interface SFunction<T, R> extends Function<T, R>, Serializable {
-        default SerializedLambda getSerializedLambda() {
-            SerializedLambda serializedLambda;
-            try {
-                Method writeReplace = this.getClass().getDeclaredMethod("writeReplace");
-                if (!writeReplace.isAccessible()) {
-                    writeReplace.setAccessible(true);
-                }
-                serializedLambda = (SerializedLambda) writeReplace.invoke(this);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                throw new TreeUtilException(e);
-            }
-            return serializedLambda;
-        }
     }
+
 
     private static class ReflectName {
         private final String field;
@@ -332,13 +338,31 @@ public class TreeUtil {
         private final String setter;
 
         public <T, R> ReflectName(SFunction<T, R> getter) {
-            SerializedLambda serializedLambda = getter.getSerializedLambda();
+            // get class and method info from serializedLambda
+            SerializedLambda serializedLambda = SerializedLambdaUtils.getFunctionalInterfaceSerializedLambda(getter);
             String className = serializedLambda.getImplClass().replace("/", ",");
             String getterName = serializedLambda.getImplMethodName();
-            if (!getterName.startsWith("get")) {
-                throw new TreeUtilException(className + "#" + getterName + " is not a standard getter! Should start with 'get' ");
+
+            Class<?> eleType = SerializedLambdaUtils.getParameterTypes(getter, serializedLambda)[0];
+            Class<?> paramType = SerializedLambdaUtils.getReturnType(serializedLambda);
+
+            String setterName;
+            try {
+                //  check getter
+                if (!getterName.startsWith("get")) {
+                    throw new TreeException(className + "#" + getterName + " is not a standard getter! Should start with 'get' ");
+                }
+                Method getterMethod = eleType.getMethod(getterName);
+                // check setter
+                setterName = getterName.replaceFirst("get", "set");
+                Method setterMethod = eleType.getMethod(setterName, paramType);
+                if (!setterMethod.getReturnType().isAssignableFrom(void.class)) {
+                    throw new RuntimeException("Error setter return type.");
+                }
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
             }
-            String setterName = getterName.replaceFirst("get", "set");
+
             String fieldName = getterName.substring(3, 4).toLowerCase() + getterName.substring(4);
             this.getter = getterName;
             this.setter = setterName;
@@ -367,24 +391,24 @@ public class TreeUtil {
 
     }
 
-    public static class TreeUtilException extends RuntimeException {
-        public TreeUtilException() {
+    public static class TreeException extends RuntimeException {
+        public TreeException() {
             super();
         }
 
-        public TreeUtilException(String message) {
+        public TreeException(String message) {
             super(message);
         }
 
-        public TreeUtilException(String message, Throwable cause) {
+        public TreeException(String message, Throwable cause) {
             super(message, cause);
         }
 
-        public TreeUtilException(Throwable cause) {
+        public TreeException(Throwable cause) {
             super(cause);
         }
 
-        protected TreeUtilException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        protected TreeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
             super(message, cause, enableSuppression, writableStackTrace);
         }
     }
