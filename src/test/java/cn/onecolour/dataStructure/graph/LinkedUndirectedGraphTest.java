@@ -1,6 +1,7 @@
 package cn.onecolour.dataStructure.graph;
 
 import cn.onecolour.dataStructure.graph.undirectedGraph.LinkedUndirectedGraph;
+import cn.onecolour.dataStructure.graph.undirectedGraph.MatrixUndirectedGraph;
 import cn.onecolour.dataStructure.graph.undirectedGraph.UndirectedGraph;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +24,8 @@ public class LinkedUndirectedGraphTest {
 
     @BeforeEach
     void setUp() {
-        graph = new LinkedUndirectedGraph<>();
+//        graph = new LinkedUndirectedGraph<>();
+        graph = new MatrixUndirectedGraph<>();
         graph.addEdge(1, 2);
         graph.addEdge(1, 5);
         graph.addEdge(2, 5);
