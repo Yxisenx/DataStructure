@@ -1,12 +1,16 @@
 package cn.onecolour.dataStructure.graph.undirectedGraph;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
- * 
  * @author yang
  * @date 2023/2/15
  * @description
@@ -34,7 +38,6 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
     }
 
 
-
     private int indexOf(T vertex) {
         for (int i = 0; i < vertexCount; i++) {
             if (Objects.equals(vertex, vertexes[i])) {
@@ -45,7 +48,7 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
     }
 
     private int[] indexOf(T v, T u) {
-        int[] indexes = new int[]{-1,-1};
+        int[] indexes = new int[]{-1, -1};
         boolean vFound = false;
         boolean uFound = false;
         for (int i = 0; i < vertexCount; i++) {
@@ -57,7 +60,7 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
                     indexes[0] = i;
             }
             if (!uFound) {
-                uFound = Objects.equals(v, vertexes[i]);
+                uFound = Objects.equals(u, vertexes[i]);
                 if (uFound)
                     indexes[1] = i;
             }
@@ -72,11 +75,11 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
         int[] indexes = indexOf(vertexV, vertexU);
         if (indexes[0] == -1) {
             addVertex(vertexV);
-            indexes[0] = vertexCount;
+            indexes[0] = vertexCount - 1;
         }
         if (indexes[1] == -1) {
             addVertex(vertexU);
-            indexes[1] = vertexCount;
+            indexes[1] = vertexCount - 1;
         }
         if (matrix[indexes[0]][indexes[1]]) {
             return;
@@ -84,6 +87,7 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
 
         matrix[indexes[0]][indexes[1]] = true;
         matrix[indexes[1]][indexes[0]] = true;
+        edgeCount++;
     }
 
     @Override
@@ -94,8 +98,12 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
             // v or u is not exists
             return;
         }
+        if (!matrix[indexes[0]][indexes[1]]) {
+            return;
+        }
         matrix[indexes[0]][indexes[1]] = false;
         matrix[indexes[1]][indexes[0]] = false;
+        edgeCount--;
     }
 
     @Override
@@ -165,7 +173,7 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
         // matrix column
         System.arraycopy(matrix, movedIndex, matrix, index, moveLength);
         Arrays.fill(matrix[latestEleIndex], false);
-        vertexCount --;
+        vertexCount--;
     }
 
     @Override
@@ -179,18 +187,42 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
 
     @Override
     public void print() {
+
+        StringBuilder vertexesSb = new StringBuilder("[\t");
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < vertexCount; i++) {
-            System.out.println(Arrays.toString(matrix[i]));
+            vertexesSb.append(vertexes[i]).append("\t");
+            boolean[] row = this.matrix[i];
+            sb.append("[\t");
+            for (int j = 0; j < vertexCount; j++) {
+                sb.append(row[j] ? 1 : 0).append("\t");
+            }
+            sb.append("]\n");
         }
+
+        vertexesSb.append("]\n\n");
+        System.out.println(vertexesSb);
+        System.out.println(sb);
     }
 
     @Override
     public void write(File file, String separator) throws IOException {
-
+        // FIXME: 2023/3/3 
     }
 
     @Override
     public void write(File file) throws IOException {
 
+    }
+
+    /**
+     * @see UndirectedGraph#read(Function, File, String, Class)
+     */
+    private static <T> UndirectedGraph<T> read(Function<String, T> parseFunction, File file, String separator) throws IOException {
+        UndirectedGraph<T> graph = new MatrixUndirectedGraph<>();
+        List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
+        // FIXME: 2023/3/3 
+
+        return graph;
     }
 }

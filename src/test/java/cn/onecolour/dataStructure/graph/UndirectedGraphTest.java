@@ -16,7 +16,7 @@ import java.io.IOException;
  * @date 2023/2/15
  * @description
  */
-public class LinkedUndirectedGraphTest {
+public class UndirectedGraphTest {
 
     private UndirectedGraph<Integer> graph;
     private final static String LINE = "-------------------";
@@ -60,8 +60,8 @@ public class LinkedUndirectedGraphTest {
         } catch (Exception e) {
             Assertions.assertEquals("Can not remove this vertex!", e.getMessage());
         }
-        graph.removeEdge(1, 2);
-        graph.removeEdge(1, 5);
+        graph.removeEdge(2, 3);
+        graph.removeEdge(2, 4);
         graph.removeVertex(1);
         Assertions.assertEquals(6,graph.edgeCount());
         Assertions.assertEquals(5, graph.vertexCount());
