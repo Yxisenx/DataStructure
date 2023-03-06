@@ -207,21 +207,47 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
 
     @Override
     public void write(File file, String separator) throws IOException {
-        // FIXME: 2023/3/3 
+        StringBuilder sb = new StringBuilder();
+        if (vertexCount > 0) {
+            for (int i = 0; i < vertexCount; i++) {
+                sb.append(vertexes[i]);
+                // start from i, save disk space
+                for (int j = i; j < vertexCount; j++) {
+                    if (matrix[i][j]) {
+                        sb.append(separator).append(vertexes[j]);
+                    }
+                }
+                sb.append("\n");
+            }
+        }
+        FileUtils.write(file, sb.replace(sb.length() - 1, sb.length(), ""), StandardCharsets.UTF_8);
     }
 
     @Override
     public void write(File file) throws IOException {
-
+        write(file, ",");
     }
 
     /**
      * @see UndirectedGraph#read(Function, File, String, Class)
      */
     private static <T> UndirectedGraph<T> read(Function<String, T> parseFunction, File file, String separator) throws IOException {
-        UndirectedGraph<T> graph = new MatrixUndirectedGraph<>();
         List<String> lines = FileUtils.readLines(file, StandardCharsets.UTF_8);
-        // FIXME: 2023/3/3 
+        UndirectedGraph<T> graph = new MatrixUndirectedGraph<>(lines.size());
+        for (String line : lines) {
+            String[] arr = line.split(separator);
+            if (arr.length > 0) {
+                T u = parseFunction.apply(arr[0]);
+                if (arr.length == 1) {
+                    graph.addVertex(u);
+                    continue;
+                }
+
+                for (int i = 1; i < arr.length; i++) {
+                    graph.addEdge(u, parseFunction.apply(arr[i]));
+                }
+            }
+        }
 
         return graph;
     }

@@ -20,7 +20,8 @@ public class UndirectedGraphTest {
 
     private UndirectedGraph<Integer> graph;
     private final static String LINE = "-------------------";
-    private final static File FILE = new File(System.getProperty("user.dir") + "/src/test/resources/linked_undirected_graph.txt");
+    private final static File LINKED_FILE = new File(System.getProperty("user.dir") + "/src/test/resources/linked_undirected_graph.txt");
+    private final static File MATRIX_FILE = new File(System.getProperty("user.dir") + "/src/test/resources/matrix_undirected_graph.txt");
 
     @BeforeEach
     void setUp() {
@@ -69,12 +70,12 @@ public class UndirectedGraphTest {
 
     @Test
     void writeTest() throws IOException {
-        graph.write(FILE, ",");
+        graph.write(graph instanceof  LinkedUndirectedGraph ? LINKED_FILE : MATRIX_FILE, ",");
     }
 
     @Test
     void readTest() throws ReflectiveOperationException {
-        graph = UndirectedGraph.read(Integer::parseInt, FILE, ",", LinkedUndirectedGraph.class);
+        graph = UndirectedGraph.read(Integer::parseInt, graph instanceof  LinkedUndirectedGraph ? LINKED_FILE : MATRIX_FILE, ",", graph.getClass());
     }
 
     @Test
