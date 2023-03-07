@@ -15,7 +15,6 @@ import java.util.function.Function;
  * @date 2023/2/15
  * @description
  */
-// FIXME: 2023/2/24 
 public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
     private final static int DEFAULT_CAPACITY = 10;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
@@ -47,6 +46,12 @@ public class MatrixUndirectedGraph<T> extends UndirectedGraph<T> {
         return -1;
     }
 
+    /**
+     * return indexes of vertex 'v' and vertex 'u', if v or u is not in graph, return -1
+     * @param v vertex 'v'
+     * @param u vertex 'u'
+     * @return [index of v or -1, index of u or -1]
+     */
     private int[] indexOf(T v, T u) {
         int[] indexes = new int[]{-1, -1};
         boolean vFound = false;
