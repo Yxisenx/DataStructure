@@ -1,4 +1,6 @@
-package cn.onecolour.dataStructure.practice.array;
+package cn.onecolour.dataStructure.practice.array.matrix;
+
+import cn.onecolour.dataStructure.practice.utils.MatrixUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -11,24 +13,8 @@ import java.util.Objects;
 public class ZigZagMatrix {
 
     public static <T> T[] zigZagMatrix(T[][] matrix) {
-        Objects.requireNonNull(matrix, "matrix cannot be null");
-        int rowNum = matrix.length;
-        Integer columnNum = null;
-        for (T[] row : matrix) {
-            if (row == null) {
-                throw new IllegalArgumentException("wrong matrix");
-            } else {
-                if (columnNum == null) {
-                    columnNum = row.length;
-                }
-                if (columnNum != row.length) {
-                    throw new IllegalArgumentException("wrong matrix");
-                }
-            }
-        }
-
-        //noinspection ConstantConditions
-        return zigZagMatrix(matrix, rowNum, columnNum);
+        int[] rowAndColumn = MatrixUtils.rowAndColumnOfMatrix(matrix);
+        return zigZagMatrix(matrix, rowAndColumn[0], rowAndColumn[1]);
     }
 
     public static <T> T[] zigZagMatrix(T[][] matrix, int rowNum, int columnNum) {
