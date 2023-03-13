@@ -33,7 +33,7 @@ public class FibonacciBenchmark {
                 .shouldFailOnError(true)
                 .shouldDoGC(true)
                 .resultFormat(ResultFormatType.JSON)
-                .output("jmh-result-fibonacci.json" )
+                .result("jmh-result-fibonacci.json" )
                 .build();
         new Runner(options).run();
     }
